@@ -2,7 +2,7 @@
 
 TTYtest2 is an acceptance test framework for interactive console applications. It's like [capybara](https://github.com/teamcapybara/capybara) for the terminal.
 
-Forked from https://github.com/jhawthorn/ttytest, because I had some features I needed for my own project.
+A drop-in replacement for https://github.com/jhawthorn/ttytest, because I had some features I needed for my own project.
 
 It works by running commands inside a tmux session, capturing the pane, and comparing the content. The assertions will wait a specified amount of time (default 2 seconds) for the expected content to appear.
 
@@ -31,7 +31,8 @@ Available assertions:
 
 
 ### Example Canonical CLI/Shell
-Most people should use send_keys, if you are writing or working with a noncanonical shell/CLI, you will probably know it. Most are canonical.
+
+Most people should use send_keys, if you are writing or working with a noncanonical shell/CLI, you will probably know it.
 
 ``` ruby
 require 'ttytest'
@@ -53,7 +54,10 @@ p @tty.rows # => ["$ echo \"Hello, world\"", "Hello, world", "$", "", "", "", ..
 ```
 
 ### Example Noncanonical CLI/Shell
+
 If you are working with a noncanonical shell, you need to use send_keys_one_at_a_time to have your shell/CLI process the input correctly.
+
+Also useful if you need to send input one character at a time for whatever reason.
 
 ``` ruby
 require 'ttytest'
@@ -65,6 +69,52 @@ require 'ttytest'
 @tty.send_keys_one_at_a_time('ls')
 @tty.assert_row_ends_with(0, 'ls')
 @tty.send_keys(%(\n)) # make sure to use send_keys for 'multi-character' characters like \n, \r, \t, etc.
+```
+
+### Constants
+
+There are some commonly used keys available as constants to make interacting with your shell/CLI easy. Most of them are self-evident, BACKSPACE is the same as hitting the backspace key on the keyboard.
+
+Note: send_keys and send_keys_one_at_a_time both use tmux send-keys. That means you can pass any input there that tmux send-keys supports. Constants are just here to help make it easier to interact with when picking up the library for the first time.
+
+tmux send-keys:
+https://man.openbsd.org/OpenBSD-current/man1/tmux.1#Left
+
+``` ruby
+  TTYtest::BACKSPACE
+  TTYtest::DELETE
+  TTYtest::TAB
+  TTYtest::CTRLF
+  TTYtest::CTRLC
+  TTYtest::CTRLD
+  TTYtest::ESCAPE_CHARACTER
+  TTYtest::ESCAPE
+  TTYtest::ENTER
+  TTYtest::NEWLINE
+  TTYtest::SPACE
+
+  TTYtest::UP_ARROW
+  TTYtest::DOWN_ARROW
+  TTYtest::RIGHT_ARROW
+  TTYtest::LEFT_ARROW
+  TTYtest::HOME_KEY # go to start of row
+  TTYtest::END_KEY # go to end of row
+  TTYtest::INSERT #toggle insert
+
+  TTYtest::CLEAR # clear the screen
+
+  TTYtest::F1 # f keys
+  TTYtest::F2
+  TTYtest::F3
+  TTYtest::F4
+  TTYtest::F5
+  TTYtest::F6
+  TTYtest::F7
+  TTYtest::F8
+  TTYtest::F9
+  TTYtest::F10
+  TTYtest::F11
+  TTYtest::F12
 ```
 
 ## Docker
