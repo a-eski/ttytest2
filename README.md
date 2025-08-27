@@ -1,6 +1,8 @@
 # ttytest2
 
+<a href="https://rubygems.org/gems/ttytest2">
 <img src="images/ttytest2.png" alt="ttytest2 logo" style="width:70%; height:auto;">
+</a>
 
 ttytest2 is a user acceptance test framework for CLI & shell applications.
 
@@ -9,6 +11,8 @@ ttytest2 is a fork and a drop-in replacement for [ttytest](https://github.com/jh
 It works by creating a tmux session behind the scenes, running the specified commands, capturing the pane, and then comparing the actual content to the expected content based on the assertions made.
 
 The assertions will wait a specified amount of time (configurable, default 2 seconds) for the expected content to appear.
+
+Download the [gem](https://rubygems.org/gems/ttytest2).
 
 [![Gem Version](https://badge.fury.io/rb/ttytest2.svg?icon=si%3Arubygems)](https://badge.fury.io/rb/ttytest2)
 
