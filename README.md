@@ -12,8 +12,6 @@ It works by creating a tmux session behind the scenes, running the specified com
 
 The assertions will wait a specified amount of time (configurable, default 2 seconds) for the expected content to appear.
 
-Download the [gem](https://rubygems.org/gems/ttytest2).
-
 [![Gem Version](https://badge.fury.io/rb/ttytest2.svg?icon=si%3Arubygems)](https://badge.fury.io/rb/ttytest2)
 
 ## Table of Contents
@@ -37,6 +35,7 @@ Download the [gem](https://rubygems.org/gems/ttytest2).
 
 ## Usage
 
+* Download the [gem](https://rubygems.org/gems/ttytest2) here.
 * More documentation available at [ttytest2 docs](https://www.rubydoc.info/gems/ttytest2).
 * There are more examples in the examples folder.
 
