@@ -49,7 +49,3 @@ module TTYtest
   self.driver = TTYtest::Tmux::Driver.new
   self.default_max_wait_time = 2
 end
-
-# alias TTYtest to ttytest2 to avoid issues accidentally including ttytest2 instead of TTYtest,
-# but preserve old name so it can still be used as a drop-in replacement for ttytest.
-TTYtest2 = TTYtest
