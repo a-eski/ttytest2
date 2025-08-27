@@ -1,6 +1,8 @@
 # ttytest2
 
+<a href="https://rubygems.org/gems/ttytest2">
 <img src="images/ttytest2.png" alt="ttytest2 logo" style="width:70%; height:auto;">
+</a>
 
 ttytest2 is a user acceptance test framework for CLI & shell applications.
 
@@ -33,6 +35,7 @@ The assertions will wait a specified amount of time (configurable, default 2 sec
 
 ## Usage
 
+* Download the [gem](https://rubygems.org/gems/ttytest2) here.
 * More documentation available at [ttytest2 docs](https://www.rubydoc.info/gems/ttytest2).
 * There are more examples in the examples folder.
 
