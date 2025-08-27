@@ -1,145 +1,15 @@
 # frozen_string_literal: true
 
+require 'ttytest/assertions/file_assertions'
+require 'ttytest/assertions/row_assertions'
+require 'ttytest/assertions/column_assertions'
+
 module TTYtest
   # Assertions for ttytest2.
   module Assertions
-    # Asserts the contents of a single row match the value expected
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [String] expected the expected value of the row. Any trailing whitespace is ignored
-    # @raise [MatchError] if the row doesn't match exactly
-    def assert_row(row_number, expected)
-      validate(row_number)
-      expected = expected.rstrip
-      actual = row(row_number)
-
-      return if !actual.nil? && actual == expected
-
-      raise MatchError,
-            "expected row #{row_number} to be #{expected.inspect} but got #{get_inspection(actual)}\n
-            Entire screen:\n#{self}"
-    end
-    alias assert_line assert_row
-
-    # Asserts the specified row is empty
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @raise [MatchError] if the row isn't empty
-    def assert_row_is_empty(row_number)
-      validate(row_number)
-      actual = row(row_number)
-
-      return if actual == ''
-
-      raise MatchError,
-            "expected row #{row_number} to be empty but got #{get_inspection(actual)}\nEntire screen:\n#{self}"
-    end
-    alias assert_line_is_empty assert_row_is_empty
-
-    # Asserts the contents of a single row contains the expected string at a specific position
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [Integer] column_start the column position to start comparing expected against
-    # @param [Integer] columns_end the column position to end comparing expected against
-    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
-    # @raise [MatchError] if the row doesn't match
-    def assert_row_at(row_number, column_start, column_end, expected)
-      validate(row_number)
-      expected = expected.rstrip
-      actual = row(row_number)
-      column_end += 1
-
-      return if !actual.nil? && actual[column_start, column_end].eql?(expected)
-
-      inspection = get_inspection_bounded(actual, column_start, column_end)
-
-      raise MatchError,
-            "expected row #{row_number} to contain #{expected[column_start,
-                                                              column_end]} at #{column_start}-#{column_end} and got #{inspection}\nEntire screen:\n#{self}"
-    end
-    alias assert_line_at assert_row_at
-
-    # Asserts the contents of a single row contains the value expected
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [String] expected the expected value contained in the row. Any trailing whitespace is ignored
-    # @raise [MatchError] if the row doesn't match
-    def assert_row_like(row_number, expected)
-      validate(row_number)
-      expected = expected.rstrip
-      actual = row(row_number)
-
-      return if !actual.nil? && actual.include?(expected)
-
-      raise MatchError,
-            "expected row #{row_number} to be like #{expected.inspect} but got #{get_inspection(actual)}\nEntire screen:\n#{self}"
-    end
-    alias assert_row_contains assert_row_like
-    alias assert_line_contains assert_row_like
-    alias assert_line_like assert_row_like
-
-    # Asserts the contents of a single row starts with expected string
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
-    # @raise [MatchError] if the row doesn't match
-    def assert_row_starts_with(row_number, expected)
-      validate(row_number)
-      expected = expected.rstrip
-      actual = row(row_number)
-
-      return if !actual.nil? && actual.start_with?(expected)
-
-      raise MatchError,
-            "expected row #{row_number} to start with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
-    end
-    alias assert_line_starts_with assert_row_starts_with
-
-    # Asserts the contents of a single row end with expected
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
-    # @raise [MatchError] if the row doesn't match
-    def assert_row_ends_with(row_number, expected)
-      validate(row_number)
-      expected = expected.rstrip
-      actual = row(row_number)
-
-      return if !actual.nil? && actual.end_with?(expected)
-
-      raise MatchError,
-            "expected row #{row_number} to end with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
-    end
-    alias assert_line_ends_with assert_row_ends_with
-
-    # Asserts the contents of a single row match against the passed in regular expression
-    # @param [Integer] row_number the row (starting from 0) to test against
-    # @param [String] regexp_str the regular expression as a string that will be used to match with.
-    # @raise [MatchError] if the row doesn't match against the regular expression
-    def assert_row_regexp(row_number, regexp_str)
-      validate(row_number)
-      regexp = Regexp.new(regexp_str)
-      actual = row(row_number)
-
-      return if !actual.nil? && actual.match?(regexp)
-
-      raise MatchError,
-            "expected row #{row_number} to match regexp #{regexp_str} but it did not. Row value #{get_inspection(actual)}\nEntire screen:\n#{self}"
-    end
-    alias assert_line_regexp assert_row_regexp
-
-    # Asserts the contents of a multiple rows each match against the passed in regular expression
-    # @param [Integer] row_start the row (starting from 0) to test against
-    # @param [Integer] row_end the last row to test against
-    # @param [String] regexp_str the regular expression as a string that will be used to match with.
-    # @raise [MatchError] if the row doesn't match against the regular expression
-    def assert_rows_each_match_regexp(row_start, row_end, regexp_str)
-      validate(row_end)
-      regexp = Regexp.new(regexp_str)
-      row_end += 1 if row_end.zero?
-
-      rows.slice(row_start, row_end).each_with_index do |actual_row, index|
-        next if !actual_row.nil? && actual_row.match?(regexp)
-
-        raise MatchError,
-              "expected row #{index} to match regexp #{regexp_str} but it did not. Row value #{get_inspection(actual_row)}\nEntire screen:\n#{self}"
-      end
-    end
-    alias assert_lines_each_match_regexp assert_rows_each_match_regexp
+    include TTYtest::FileAssertions
+    include TTYtest::RowAssertions
+    include TTYtest::ColumnAssertions
 
     # Asserts that the cursor is in the expected position
     # @param [Integer] x cursor x (row) position, starting from 0
@@ -241,77 +111,6 @@ module TTYtest
     end
     alias assert_screen_matches_regexp assert_contents_match_regexp
 
-    # Asserts the specified file exists
-    # @param [String] file_path the path to the file
-    # @raise [MatchError] if the file is not found or is a directory/symlink
-    def assert_file_exists(file_path)
-      raise file_not_found_error(file_path) unless File.exist?(file_path)
-      raise file_is_dir_error(file_path) unless File.file?(file_path)
-    end
-
-    # Asserts the specified file does not exists
-    # @param [String] file_path the path to the file
-    # @raise [MatchError] if the file is found or is a directory/symlink
-    def assert_file_doesnt_exist(file_path)
-      return unless File.exist?(file_path) || File.file?(file_path)
-
-      raise MatchError,
-            "File with path #{file_path} was found or is a directory when it was asserted it did not exist.\nEntire screen:\n#{self}"
-    end
-
-    # Asserts the specified file contains the passed in string value
-    # @param [String] file_path the path to the file
-    # @param [String] needle the value to search for in the file
-    # @raise [MatchError] if the file does not contain value in variable needle
-    def assert_file_contains(file_path, needle)
-      raise file_not_found_error(file_path) unless File.exist?(file_path)
-      raise file_is_dir_error(file_path) unless File.file?(file_path)
-
-      file_contains = false
-      File.foreach(file_path) do |line|
-        if line.include?(needle)
-          file_contains = true
-          break
-        end
-      end
-      return if file_contains
-
-      raise MatchError,
-            "File with path #{file_path} did not contain #{needle}.\nEntire screen:\n#{self}"
-    end
-    alias assert_file_like assert_file_contains
-
-    # Asserts the specified file has the permissions specified
-    # @param [String] file_path the path to the file
-    # @param [String] permissions the expected permissions of the file (in form '644' or '775')
-    # @raise [MatchError] if the file has different permissions than specified
-    def assert_file_has_permissions(file_path, permissions)
-      raise file_not_found_error(file_path) unless File.exist?(file_path)
-      raise file_is_dir_error(file_path) unless File.file?(file_path)
-
-      file_mode = File.stat(file_path).mode
-      perms_octal = format('%o', file_mode)[-3...]
-      return if perms_octal == permissions
-
-      raise MatchError,
-            "File had permissions #{perms_octal}, not #{permissions} as expected.\n Entire screen:\n#{self}"
-    end
-
-    # Asserts the specified file has line count specified
-    # @param [String] file_path the path to the file
-    # @param [String] expected_count the expected line count of the file
-    # @raise [MatchError] if the file has a different line count than specified
-    def assert_file_has_line_count(file_path, expected_count)
-      raise file_not_found_error(file_path) unless File.exist?(file_path)
-      raise file_is_dir_error(file_path) unless File.file?(file_path)
-
-      actual_count = File.foreach(file_path).count
-      return if actual_count == expected_count
-
-      raise MatchError,
-            "File had #{actual_count} lines, not #{expected_count} lines as expected.\nEntire screen:\n#{self}"
-    end
-
     METHODS = public_instance_methods
 
     private
@@ -357,16 +156,6 @@ module TTYtest
       end
 
       [matched, diff]
-    end
-
-    def file_not_found_error(file_path)
-      raise MatchError,
-            "File with path #{file_path} was not found when asserted it did exist.\nEntire screen:\n#{self}"
-    end
-
-    def file_is_dir_error(file_path)
-      raise MatchError,
-            "File with path #{file_path} is a directory.\nEntire screen:\n#{self}"
     end
   end
 end
