@@ -196,8 +196,10 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_newline` # simulate hitting enter, equivalent to @tty.send_keys(%(\n))
 * `send_newlines(number_of_times)` # equivalent to calling send_newline number_of_times
-* `send_enter` # alias for send_newline
-* `send_enters(number_of_times)` # alias for send_newlines
+
+* `send_return` # simulate hitting enter, equivalent to @tty.send_keys(%(\r))
+* `send_returns(number_of_times)` # equivalent to calling send_return number_of_times
+
 
 * `send_backspace` # simulate hitting backspace, equivalent to @tty.send_keys(TTYtest::BACKSPACE)
 * `send_backspaces(number_of_times)` # equivalent to calling send_backspace number_of_times
@@ -224,6 +226,9 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_escape`
 * `send_escapes(number_of_times)`
+
+* `send_tab`
+* `send_tab(number_of_times)`
 
 ### F keys?
 
@@ -324,6 +329,8 @@ p "\n#{@tty.capture}" # this is equivalent to above statement @tty.print
 If you are using ttyest2 to test your CLI, using sh is easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
 
 If you are using ttytest2 to test your shell, using assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are going to be extremely helpful, especially if trying to test your shell in different environments or using a docker container.
+
+Most line readers use '\n' for newline, but some may interpret it differently and expect '\r'.
 
 ## Docker
 
