@@ -16,7 +16,7 @@ module TTYtest
   SHIFT_ENTER = 11.chr # \v
   FORM_FEED = 12.chr # \f
   CTRLL = 12.chr
-  CARRIAGE_RETURN = 13.chr # \r
+  RETURN = 13.chr # \r
   CTRLU = 21.chr
   CTRLW = 23.chr
   ESCAPE = 27.chr # ^[ or /033 or /e

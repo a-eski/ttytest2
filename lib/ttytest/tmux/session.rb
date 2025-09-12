@@ -100,7 +100,6 @@ module TTYtest
       def send_newline
         driver.tmux(*%W[send-keys -t #{name} -l], %(\n))
       end
-      alias send_enter send_newline
 
       def send_newlines(number_of_times)
         while number_of_times.positive?
@@ -108,7 +107,17 @@ module TTYtest
           number_of_times -= 1
         end
       end
-      alias send_enters send_newlines
+
+      def send_return
+        driver.tmux(*%W[send-keys -t #{name} -l], %(\r))
+      end
+
+      def send_returns(number_of_times)
+        while number_of_times.positive?
+          send_return
+          number_of_times -= 1
+        end
+      end
 
       def send_delete
         send_keys_exact(%(DC))
@@ -204,6 +213,17 @@ module TTYtest
       def send_escapes(number_of_times)
         while number_of_times.positive?
           send_escape
+          number_of_times -= 1
+        end
+      end
+
+      def send_tab
+        send_keys_exact(TTYtest::TAB)
+      end
+
+      def send_tabs(number_of_times)
+        while number_of_times.positive?
+          send_tab
           number_of_times -= 1
         end
       end

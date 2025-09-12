@@ -258,7 +258,7 @@ There are some commonly used keys available as constants to make interacting wit
   TTYtest::SHIFT_ENTER # \v
   TTYtest::FORM_FEED # \f or New Page NP
   TTYtest::CTRLL
-  TTYtest::CARRIAGE_RETURN # \r
+  TTYtest::RETURN # \r
   TTYtest::CTRLU
   TTYtest::CTRLW
   TTYtest::ESCAPE # 27 decimal or ^[ or /033
