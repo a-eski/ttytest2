@@ -196,8 +196,10 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_newline` # simulate hitting enter, equivalent to @tty.send_keys(%(\n))
 * `send_newlines(number_of_times)` # equivalent to calling send_newline number_of_times
-* `send_enter` # alias for send_newline
-* `send_enters(number_of_times)` # alias for send_newlines
+
+* `send_return` # simulate hitting enter, equivalent to @tty.send_keys(%(\r))
+* `send_returns(number_of_times)` # equivalent to calling send_return number_of_times
+
 
 * `send_backspace` # simulate hitting backspace, equivalent to @tty.send_keys(TTYtest::BACKSPACE)
 * `send_backspaces(number_of_times)` # equivalent to calling send_backspace number_of_times
@@ -224,6 +226,9 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_escape`
 * `send_escapes(number_of_times)`
+
+* `send_tab`
+* `send_tab(number_of_times)`
 
 ### F keys?
 
@@ -258,7 +263,7 @@ There are some commonly used keys available as constants to make interacting wit
   TTYtest::SHIFT_ENTER # \v
   TTYtest::FORM_FEED # \f or New Page NP
   TTYtest::CTRLL
-  TTYtest::CARRIAGE_RETURN # \r
+  TTYtest::RETURN # \r
   TTYtest::CTRLU
   TTYtest::CTRLW
   TTYtest::ESCAPE # 27 decimal or ^[ or /033
@@ -278,7 +283,9 @@ There are some commonly used keys available as constants to make interacting wit
 
 ## Configurables
 
-Currently the only configuration for ttytest2 is max wait time.
+There are 2 main configurations for ttytest2: max_wait_time, and use_return_for_newline.
+
+### Max wait time
 
 Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing.
 
@@ -290,6 +297,24 @@ You can configure max wait time as shown below.
 @tty.assert_row(0, 'echo Hello, world') # this assertion would fail after 1 second
 @tty.max_wait_time = 3
 @tty.assert_row(0, 'echo Hello, world') # this assertion would fail after 3 seconds
+```
+
+### Use return for newline
+
+Use return for newline tells ttytest2 to use return ('//r') instead of newline ('//n') for methods like send_line.
+
+Some line readers may interpreter return and newline differently, so this can be useful in those cases.
+
+You can still send newline via send_newline when this is enabled.
+
+You can also send return by itself with send_return.
+
+``` ruby
+@tty = TTYtest::new_terminal('', use_return_for_newline: true) # specified to use return in place of newline
+
+@tty.send_line('hello, world!') # will have return sent after 'hello, world!'
+@tty.use_return_for_newline = false
+@tty.assert_row(0, 'echo Hello, world') # will have newline sent after 'echo Hello, world'
 ```
 
 ## Troubleshooting
@@ -324,6 +349,8 @@ p "\n#{@tty.capture}" # this is equivalent to above statement @tty.print
 If you are using ttyest2 to test your CLI, using sh is easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
 
 If you are using ttytest2 to test your shell, using assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are going to be extremely helpful, especially if trying to test your shell in different environments or using a docker container.
+
+Most line readers use '\n' for newline, but some may interpret it differently and expect '\r'.
 
 ## Docker
 

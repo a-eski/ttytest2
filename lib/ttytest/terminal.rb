@@ -9,14 +9,15 @@ module TTYtest
   class Terminal
     extend Forwardable
 
-    attr_accessor :max_wait_time
+    attr_accessor :max_wait_time, :use_return_for_newline
 
     # @api private
     # @see TTYtest.new_terminal, use this or other new_* methods instead.
     # Internal constructor.
-    def initialize(driver_terminal)
+    def initialize(driver_terminal, max_wait_time, use_return_for_newline)
+      @max_wait_time = max_wait_time
+      @use_return_for_newline = use_return_for_newline
       @driver_terminal = driver_terminal
-      @max_wait_time = TTYtest.default_max_wait_time
     end
 
     # @!method send_keys(*keys)
@@ -67,17 +68,21 @@ module TTYtest
     #   @param [Integer] sleep_time the amount of time to sleep after sending the line
 
     # @!method send_newline
-    #   Simulate typing enter by sending newline character to the terminal.
+    #   Simulate typing enter by sending newline (ALT + enter) character to the terminal.
+    #   Many line readers interpreter newline as return, but in some cases you may have to use send_return.
 
     # @!method send_newlines(number_of_times)
-    #   Simulates sending newline the specified number of times.
+    #   Simulates sending newline (ALT + enter) the specified number of times.
+    #   Many line readers interpreter newline as return, but in some cases you may have to use send_return.
     #   @param [Integer] number_of_times number of times to send newline
 
-    # @!method send_enter
+    # @!method send_return
     #   Simulate typing enter by sending newline character to the terminal.
+    #   Many line readers interpreter newline as return, but in some cases you may have to use send_return.
 
-    # @!method send_enters(number_of_times)
+    # @!method send_returns(number_of_times)
     #   Simulates sending newline the specified number of times.
+    #   Many line readers interpreter newline as return, but in some cases you may have to use send_return.
     #   @param [Integer] number of times to send newline
 
     # @!method send_delete
@@ -142,6 +147,13 @@ module TTYtest
     #   Simulates typing in the Escape (ESC) key in the terminal the specified number of times.
     #   @param [Integer] number of times to send escape
 
+    # @!method send_tab
+    #   Simulates typing in the Tab (\t) key in the terminal.
+
+    # @!method send_tabs(number_of_times)
+    #   Simulates typing in the Tab (\t) key in the terminal the specified number of times.
+    #   @param [Integer] number of times to send tab
+
     # @!method capture
     #   Capture represents the current state of the terminal.
     #   @return [Capture] The current state of the terminal when called
@@ -152,11 +164,13 @@ module TTYtest
                    :send_line_exact, :send_lines_exact,
                    :send_newline, :send_newlines,
                    :send_enter, :send_enters,
+                   :send_return, :send_returns,
                    :send_delete, :send_deletes,
                    :send_backspace, :send_backspaces,
                    :send_left_arrow, :send_left_arrows, :send_right_arrow, :send_right_arrows,
                    :send_down_arrow, :send_down_arrows, :send_up_arrow, :send_up_arrows,
                    :send_keys_exact, :send_home, :send_end, :send_clear, :send_escape, :send_escapes,
+                   :send_tab, :send_tabs,
                    :capture
 
     # @!method print

@@ -9,7 +9,7 @@ module TTYtest
   class Capture
     include TTYtest::Assertions
 
-    attr_reader :cursor_x, :cursor_y, :width, :height
+    attr_reader :cursor_x, :cursor_y, :width, :height, :max_wait_time, :use_return_for_newline
 
     # Used internally by drivers when called by {Terminal#capture}
     # @api private

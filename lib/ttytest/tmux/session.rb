@@ -5,10 +5,11 @@ module TTYtest
     # represents a tmux session and how to send output to the current tmux session
     class Session
       # @api private
-      def initialize(driver, name)
+      def initialize(driver, name, use_return_for_newline)
         @id = SecureRandom.uuid
         @driver = driver
         @name = name
+        @use_return_for_newline = use_return_for_newline
 
         ObjectSpace.define_finalizer(@id, proc {
           begin
@@ -58,6 +59,10 @@ module TTYtest
       # Send line to tmux, no need to worry about newline character
       def send_line(line)
         send_keys_one_at_a_time(line)
+        if @use_return_for_newline
+          send_return unless ['\n', '\r'].include?(line[-1])
+          return
+        end
         send_newline unless line[-1] == '\n'
       end
 
@@ -75,6 +80,10 @@ module TTYtest
 
       def send_line_exact(line)
         send_keys_exact(line)
+        if @use_return_for_newline
+          send_return unless ['\n', '\r'].include?(line[-1])
+          return
+        end
         send_newline unless line[-1] == '\n'
       end
 
@@ -100,7 +109,6 @@ module TTYtest
       def send_newline
         driver.tmux(*%W[send-keys -t #{name} -l], %(\n))
       end
-      alias send_enter send_newline
 
       def send_newlines(number_of_times)
         while number_of_times.positive?
@@ -108,7 +116,17 @@ module TTYtest
           number_of_times -= 1
         end
       end
-      alias send_enters send_newlines
+
+      def send_return
+        driver.tmux(*%W[send-keys -t #{name} -l], %(\r))
+      end
+
+      def send_returns(number_of_times)
+        while number_of_times.positive?
+          send_return
+          number_of_times -= 1
+        end
+      end
 
       def send_delete
         send_keys_exact(%(DC))
@@ -194,6 +212,10 @@ module TTYtest
 
       def send_clear
         send_keys_one_at_a_time(TTYtest::CLEAR)
+        if @use_return_for_newline
+          send_return
+          return
+        end
         send_newline
       end
 
@@ -204,6 +226,17 @@ module TTYtest
       def send_escapes(number_of_times)
         while number_of_times.positive?
           send_escape
+          number_of_times -= 1
+        end
+      end
+
+      def send_tab
+        send_keys_exact(TTYtest::TAB)
+      end
+
+      def send_tabs(number_of_times)
+        while number_of_times.positive?
+          send_tab
           number_of_times -= 1
         end
       end

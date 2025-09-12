@@ -16,30 +16,38 @@ module TTYtest
     #   @param [String] command a valid shell command to run
     #   @param [Integer] width width of the new terminal
     #   @param [Integer] height height of the new terminal
+    #   @param [Integer] max_wait_time max time to wait for screen to update before an assertion fails
+    #   @param [bool] use_return_for_newline use return instead of newline for functions like send_line
     #   @return [Terminal] a new terminal running the specified command
 
     # @!method new_default_sh_terminal
     #   Create a new terminal using '/bin/sh' with width: 80 and height: 24.
     #   Useful for Unixes.
+    #   @return [Terminal] a new sh terminal
 
     # @!method new_sh_terminal(width: 80, height: 24)
     #   Create a new terminal using '/bin/sh' with ability to set width and height.
     #   Useful for Unixes.
+    #   @param [Integer] max_wait_time max time to wait for screen to update before an assertion fails
+    #   @param [bool] use_return_for_newline use return instead of newline for functions like send_line
+    #   @return [Terminal] a new sh terminal with specified width and height
+
     def_delegators :driver
 
-    def new_terminal(cmd, width: 80, height: 24, max_wait_time: 2)
-      @max_wait_time = max_wait_time
-      driver.new_terminal(cmd, width: width, height: height)
+    def new_terminal(cmd, width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
+      # @max_wait_time = max_wait_time
+      # @use_return_for_newline = use_return_for_newline
+      driver.new_terminal(cmd, width: width, height: height, max_wait_time: max_wait_time,
+                               use_return_for_newline: use_return_for_newline)
     end
 
-    def new_default_sh_terminal(max_wait_time: 2)
-      @max_wait_time = max_wait_time
+    def new_default_sh_terminal
       driver.new_default_sh_terminal
     end
 
-    def new_sh_terminal(width: 80, height: 24, max_wait_time: 2)
-      @max_wait_time = max_wait_time
-      driver.new_sh_terminal(width: width, height: height)
+    def new_sh_terminal(width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
+      driver.new_sh_terminal(width: width, height: height, max_wait_time: max_wait_time,
+                             use_return_for_newline: use_return_for_newline)
     end
   end
 
