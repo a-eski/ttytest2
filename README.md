@@ -283,7 +283,9 @@ There are some commonly used keys available as constants to make interacting wit
 
 ## Configurables
 
-Currently the only configuration for ttytest2 is max wait time.
+There are 2 main configurations for ttytest2: max_wait_time, and use_return_for_newline.
+
+### Max wait time
 
 Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing.
 
@@ -295,6 +297,24 @@ You can configure max wait time as shown below.
 @tty.assert_row(0, 'echo Hello, world') # this assertion would fail after 1 second
 @tty.max_wait_time = 3
 @tty.assert_row(0, 'echo Hello, world') # this assertion would fail after 3 seconds
+```
+
+### Use return for newline
+
+Use return for newline tells ttytest2 to use return ('//r') instead of newline ('//n') for methods like send_line.
+
+Some line readers may interpreter return and newline differently, so this can be useful in those cases.
+
+You can still send newline via send_newline when this is enabled.
+
+You can also send return by itself with send_return.
+
+``` ruby
+@tty = TTYtest::new_terminal('', use_return_for_newline: true) # specified to use return in place of newline
+
+@tty.send_line('hello, world!') # will have return sent after 'hello, world!'
+@tty.use_return_for_newline = false
+@tty.assert_row(0, 'echo Hello, world') # will have newline sent after 'echo Hello, world'
 ```
 
 ## Troubleshooting

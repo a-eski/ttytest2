@@ -5,10 +5,11 @@ module TTYtest
     # represents a tmux session and how to send output to the current tmux session
     class Session
       # @api private
-      def initialize(driver, name)
+      def initialize(driver, name, use_return_for_newline)
         @id = SecureRandom.uuid
         @driver = driver
         @name = name
+        @use_return_for_newline = use_return_for_newline
 
         ObjectSpace.define_finalizer(@id, proc {
           begin
@@ -58,6 +59,10 @@ module TTYtest
       # Send line to tmux, no need to worry about newline character
       def send_line(line)
         send_keys_one_at_a_time(line)
+        if @use_return_for_newline
+          send_return unless ['\n', '\r'].include?(line[-1])
+          return
+        end
         send_newline unless line[-1] == '\n'
       end
 
@@ -75,6 +80,10 @@ module TTYtest
 
       def send_line_exact(line)
         send_keys_exact(line)
+        if @use_return_for_newline
+          send_return unless ['\n', '\r'].include?(line[-1])
+          return
+        end
         send_newline unless line[-1] == '\n'
       end
 
@@ -203,6 +212,10 @@ module TTYtest
 
       def send_clear
         send_keys_one_at_a_time(TTYtest::CLEAR)
+        if @use_return_for_newline
+          send_return
+          return
+        end
         send_newline
       end
 

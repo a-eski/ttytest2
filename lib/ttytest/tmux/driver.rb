@@ -31,21 +31,22 @@ module TTYtest
         @config_file_path = config_file_path
       end
 
-      def new_terminal(cmd, width: 80, height: 24)
+      def new_terminal(cmd, width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
         cmd = "#{cmd}\n#{SLEEP_INFINITY}"
 
         session_name = "ttytest-#{SecureRandom.uuid}"
         tmux(*%W[-f #{@config_file_path} new-session -s #{session_name} -d -x #{width} -y #{height} #{cmd}])
-        session = Session.new(self, session_name)
-        Terminal.new(session)
+        session = Session.new(self, session_name, use_return_for_newline)
+        Terminal.new(session, max_wait_time, use_return_for_newline)
       end
 
       def new_default_sh_terminal
-        new_terminal(%(PS1='$ ' /bin/sh), width: 80, height: 24)
+        new_terminal(%(PS1='$ ' /bin/sh), width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
       end
 
-      def new_sh_terminal(width: 80, height: 24)
-        new_terminal(%(PS1='$ ' /bin/sh), width: width, height: height)
+      def new_sh_terminal(width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
+        new_terminal(%(PS1='$ ' /bin/sh), width: width, height: height, max_wait_time: max_wait_time,
+                                          use_return_for_newline: use_return_for_newline)
       end
 
       # @api private

@@ -9,14 +9,15 @@ module TTYtest
   class Terminal
     extend Forwardable
 
-    attr_accessor :max_wait_time
+    attr_accessor :max_wait_time, :use_return_for_newline
 
     # @api private
     # @see TTYtest.new_terminal, use this or other new_* methods instead.
     # Internal constructor.
-    def initialize(driver_terminal)
+    def initialize(driver_terminal, max_wait_time, use_return_for_newline)
+      @max_wait_time = max_wait_time
+      @use_return_for_newline = use_return_for_newline
       @driver_terminal = driver_terminal
-      @max_wait_time = TTYtest.default_max_wait_time
     end
 
     # @!method send_keys(*keys)
