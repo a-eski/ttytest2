@@ -4,7 +4,7 @@
 <img src="images/ttytest2.png" alt="ttytest2 logo" style="width:70%; height:auto;">
 </a>
 
-ttytest2 is a user acceptance test framework for CLI & shell applications.
+ttytest2 is a integration test framework for CLI & shell applications.
 
 ttytest2 is a fork and a drop-in replacement for [ttytest](https://github.com/jhawthorn/ttytest).
 
@@ -301,7 +301,7 @@ You can configure max wait time as shown below.
 
 ### Use return for newline
 
-Use return for newline tells ttytest2 to use return ('//r') instead of newline ('//n') for methods like send_line.
+Use return for newline tells ttytest2 to use return ('/r') instead of newline ('/n') for methods like send_line.
 
 Some line readers may interpreter return and newline differently, so this can be useful in those cases.
 
@@ -350,7 +350,7 @@ If you are using ttyest2 to test your CLI, using sh is easier than bash because 
 
 If you are using ttytest2 to test your shell, using assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are going to be extremely helpful, especially if trying to test your shell in different environments or using a docker container.
 
-Most line readers use '\n' for newline, but some may interpret it differently and expect '\r'.
+Most line readers use '\n' for newline, but some may interpret newline and return differently or expect '\r'.
 
 ## Docker
 
