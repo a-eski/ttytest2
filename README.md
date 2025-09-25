@@ -38,6 +38,8 @@ The assertions will wait a specified amount of time (configurable, default 2 sec
 * Download the [gem](https://rubygems.org/gems/ttytest2) here.
 * More documentation available at [ttytest2 docs](https://www.rubydoc.info/gems/ttytest2).
 * There are more examples in the examples folder.
+* Synchronous example: [ncsh synchronous tests](https://github.com/a-eski/ncsh/blob/main/acceptance_tests/tests/acceptance_tests.rb)
+* Concurrent & generated example: [ncsh concurrent tests](https://github.com/a-eski/ncsh/blob/main/acceptance_tests/minitest/tests.rb)
 
 ### Simple Example
 
