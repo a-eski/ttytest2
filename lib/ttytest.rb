@@ -22,12 +22,12 @@ module TTYtest
 
     # @!method new_default_sh_terminal
     #   Create a new terminal using '/bin/sh' with width: 80 and height: 24.
-    #   Useful for Unixes.
+    #   Useful for applications like shells which may show user or the cwd.
     #   @return [Terminal] a new sh terminal
 
     # @!method new_sh_terminal(width: 80, height: 24)
     #   Create a new terminal using '/bin/sh' with ability to set width and height.
-    #   Useful for Unixes.
+    #   Useful for applications like shells which may show user or the cwd.
     #   @param [Integer] max_wait_time max time to wait for screen to update before an assertion fails
     #   @param [bool] use_return_for_newline use return instead of newline for functions like send_line
     #   @return [Terminal] a new sh terminal with specified width and height
@@ -35,8 +35,6 @@ module TTYtest
     def_delegators :driver
 
     def new_terminal(cmd, width: 80, height: 24, max_wait_time: 2, use_return_for_newline: false)
-      # @max_wait_time = max_wait_time
-      # @use_return_for_newline = use_return_for_newline
       driver.new_terminal(cmd, width: width, height: height, max_wait_time: max_wait_time,
                                use_return_for_newline: use_return_for_newline)
     end

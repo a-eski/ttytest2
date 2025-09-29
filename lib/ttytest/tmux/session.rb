@@ -78,21 +78,6 @@ module TTYtest
         end
       end
 
-      def send_line_exact(line)
-        send_keys_exact(line)
-        if @use_return_for_newline
-          send_return unless ['\n', '\r'].include?(line[-1])
-          return
-        end
-        send_newline unless line[-1] == '\n'
-      end
-
-      def send_lines_exact(*lines)
-        lines.each do |line|
-          send_line_exact(line)
-        end
-      end
-
       def send_lines_then_sleep(*lines, sleep_time)
         lines.each do |line|
           send_line(line)
@@ -103,6 +88,40 @@ module TTYtest
       def send_line_then_sleep_and_repeat(*lines, sleep_time)
         lines.each do |line|
           send_line_then_sleep(line, sleep_time)
+        end
+      end
+
+      def send_line_exact(line)
+        send_keys_exact(line)
+        if @use_return_for_newline
+          send_return unless ['\n', '\r'].include?(line[-1])
+          return
+        end
+        send_newline unless line[-1] == '\n'
+      end
+
+      # Send line then sleep for sleep_time
+      def send_line_exact_then_sleep(line, sleep_time)
+        send_line_exact(line)
+        sleep sleep_time
+      end
+
+      def send_lines_exact(*lines)
+        lines.each do |line|
+          send_line_exact(line)
+        end
+      end
+
+      def send_lines_exact_then_sleep(*lines, sleep_time)
+        lines.each do |line|
+          send_line_exact(line)
+        end
+        sleep sleep_time
+      end
+
+      def send_line_exact_then_sleep_and_repeat(*lines, sleep_time)
+        lines.each do |line|
+          send_line_exact_then_sleep(line, sleep_time)
         end
       end
 

@@ -34,7 +34,7 @@ module TTYtest
     end
     alias assert_line_is_empty assert_row_is_empty
 
-    # Asserts the contents of a single row contains the expected string at a specific position
+    # Asserts the contents of a row contain the expected string at the specified position
     # @param [Integer] row_number the row (starting from 0) to test against
     # @param [Integer] column_start the column position to start comparing expected against
     # @param [Integer] columns_end the column position to end comparing expected against
@@ -51,8 +51,7 @@ module TTYtest
       inspection = get_inspection_bounded(actual, column_start, column_end)
 
       raise MatchError,
-            "expected row #{row_number} to contain #{expected[column_start,
-                                                              column_end]} at #{column_start}-#{column_end} and got #{inspection}\nEntire screen:\n#{self}"
+            "expected row #{row_number} to contain #{expected} at #{column_start}-#{column_end} and got #{inspection}\nEntire screen:\n#{self}"
     end
     alias assert_line_at assert_row_at
 

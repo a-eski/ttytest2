@@ -4,13 +4,13 @@
 <img src="images/ttytest2.png" alt="ttytest2 logo" style="width:70%; height:auto;">
 </a>
 
-ttytest2 is a integration test framework for CLI & shell applications.
+ttytest2 is a integration test framework for CLI, TUI, & shell applications.
 
 ttytest2 is a fork and a drop-in replacement for [ttytest](https://github.com/jhawthorn/ttytest).
 
 It works by creating a tmux session behind the scenes, running the specified commands, capturing the pane, and then comparing the actual content to the expected content based on the assertions made.
 
-The assertions will wait a specified amount of time (configurable, default 2 seconds) for the expected content to appear.
+The assertions will wait a configuable amount of time (default 2 seconds) for the expected content to appear before failing.
 
 [![Gem Version](https://badge.fury.io/rb/ttytest2.svg?icon=si%3Arubygems)](https://badge.fury.io/rb/ttytest2)
 
@@ -79,11 +79,11 @@ TTY
 
 Call one of these methods to initialize an instance of ttytest2.
 
-* `new_terminal(cmd, width, height)`: initialize new tmux terminal instance and run cmd.
+* `new_terminal(cmd, width, height, max_wait_time, use_return_for_newline)`: initialize new tmux terminal instance and run cmd.
 
 * `new_default_sh_terminal()`: intialize new tmux terminal instance using sh, width of 80, height of 24.
 
-* `new_sh_terminal(width, height)`: intialize new tmux terminal instance using sh and width and height parameters.
+* `new_sh_terminal(width, height, max_wait_time, use_return_for_newline)`: intialize new tmux terminal instance using sh.
 
 ``` ruby
 require 'ttytest'
@@ -98,6 +98,8 @@ require 'ttytest'
 # you can also use other shells, like bash
 @tty = TTYtest.new_terminal('/bin/bash')
 @tty = TTYtest.new_terminal('/bin/bash', width: 80, height: 24)
+
+# you can specify further options, see section Configurables.
 ```
 
 ## Assertions
@@ -129,6 +131,12 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 * `assert_row_regexp(row_number, regexp_str)`
 
 * `assert_rows_each_match_regexp(row_start, row_end, regexp_str)`
+
+* `assert_column(col_number, expected_text)`
+
+* `assert_column_is_empty(col_number)`
+
+* `assert_column_at(col_number, row_start, row_end, expected_str)`
 
 * `assert_cursor_position(x: x, y: y)`
 
@@ -164,17 +172,17 @@ Note: Most of the time send_line has the best ergonomics.
 
 ### Base Functions
 
-These functions form the basis of interacting with the tmux pane. They power all other functions, but you can use them directly when needed.
+These functions form the basis of interacting with the tmux pane. Internally they power the other functions, but you can also use them directly.
 
-* `send_keys(output)`: for canonical shells/CLI's (or multi-character keys for noncanonical shells/CLI's).
+* `send_keys(output)`: for canonical apps (or multi-character keys for noncanonical apps).
 
-* `send_keys_one_at_a_time(output)`: for noncanonical shells/CLI's.
+* `send_keys_one_at_a_time(output)`: for noncanonical apps.
 
-* `send_keys_exact(output)`: sends keys as is, exactly. Also useful for sending tmux specific keys (any supported tmux send-keys arguments like: DC for delete, Escape for ESC, etc.)
+* `send_keys_exact(output)`: sends keys as is, exactly. Also useful for sending tmux specific keys (any tmux send-keys arguments like: DC (delete), Escape (ESC), etc.)
 
 ### Ergonomic Functions
 
-The base functions work great, but these functions build upon the base functions to provide more functionality and better ergonomics in most cases.
+The base functions work great, but these functions build upon the base functions to provide more functionalities and better ergonomics.
 
 For example, `send_line(line)` makes sure that the enter key (newline character) is sent after the `line` so you don't have to worry about adding it to `line` or calling send_newline after.
 
@@ -190,7 +198,13 @@ For example, `send_line(line)` makes sure that the enter key (newline character)
 
 * `send_line_exact`: send line exactly as is to tmux. Certain special characters may not work with send_line. You can also include tmux send-keys arguments like DC for delete, etc.
 
+* `send_line_exact_then_sleep(line, sleep_time)`: simulate typing in a command in the terminal and hitting enter using send_line_exact semantics, then wait for sleep_time seconds.
+
 * `send_lines_exact`: send lines exactly are they are to tmux. Similar semantics to send_line_exact.
+
+* `send_lines_exact_then_sleep(lines, sleep_time)`: for each line in lines, simulate sending the line and hitting enter using send_line_exact semantics. After sending all the lines, sleep for sleep_time.
+
+* `send_line_exact_then_sleep_and_repeat(lines, sleep_time)`: for each line in lines, simulate sending the line and hitting enter using send_line_exact, then sleep before sending the next line.
 
 ### Output Helpers
 
@@ -201,7 +215,6 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_return` # simulate hitting enter, equivalent to @tty.send_keys(%(\r))
 * `send_returns(number_of_times)` # equivalent to calling send_return number_of_times
-
 
 * `send_backspace` # simulate hitting backspace, equivalent to @tty.send_keys(TTYtest::BACKSPACE)
 * `send_backspaces(number_of_times)` # equivalent to calling send_backspace number_of_times
@@ -248,9 +261,12 @@ Send F keys like F1, F2, etc. as shown below:
 
 ### Constants
 
-There are some commonly used keys available as constants to make interacting with your shell/CLI easy.
+Commonly used keys are available as constants to simplify use.
 
 ``` ruby
+# can use like:
+  send_keys_exact(TTYtest::CTRLA)
+
   TTYtest::CTRLA
   TTYtest::CTRLB
   TTYtest::CTRLC
@@ -289,7 +305,7 @@ There are 2 main configurations for ttytest2: max_wait_time, and use_return_for_
 
 ### Max wait time
 
-Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing.
+Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing that assertion.
 
 You can configure max wait time as shown below.
 
@@ -303,7 +319,7 @@ You can configure max wait time as shown below.
 
 ### Use return for newline
 
-Use return for newline tells ttytest2 to use return ('/r') instead of newline ('/n') for methods like send_line.
+Use return for newline tells ttytest2 to use return ('/r') instead of newline ('/n') for methods like send_line, send_line_exact, etc.
 
 Some line readers may interpreter return and newline differently, so this can be useful in those cases.
 
@@ -348,11 +364,11 @@ p "\n#{@tty.capture}" # this is equivalent to above statement @tty.print
 
 ## Tips
 
-If you are using ttyest2 to test your CLI, using sh is easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
+If you are using ttyest2 to test your CLI, using sh can be easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
 
-If you are using ttytest2 to test your shell, using assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are going to be extremely helpful, especially if trying to test your shell in different environments or using a docker container.
+The assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are usually extremely helpful, especially if trying to test your application in different environments or using a docker container with a shell that is not sh.
 
-Most line readers use '\n' for newline, but some may interpret newline and return differently or expect '\r'.
+Most line readers use '\n' for newline, but some may interpret newline and return differently or expect '\r' for the enter key.
 
 ## Docker
 

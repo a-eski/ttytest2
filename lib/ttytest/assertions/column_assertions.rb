@@ -37,5 +37,36 @@ module TTYtest
               "expected column #{col_number} to be empty\nEntire screen:\n#{self}"
       end
     end
+
+    # Asserts the contents of a column contain the expected string at the specified position
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [Integer] row_start the row position to start comparing expected against
+    # @param [Integer] row_end the row position to end comparing expected against (inclusive)
+    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_at(col_number, row_start, row_end, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = []
+
+      rows.each_with_index do |row, i|
+        next if i < row_start
+        break if i > row_end || row.nil? || row == ''
+
+        actual[i - row_start] = row[col_number]
+        next if row[col_number] == expected[i - row_start]
+
+        raise MatchError,
+              "expected column #{col_number} to be #{expected.inspect}\n
+            Entire screen:\n#{self}"
+      end
+
+      return if !actual.nil? && actual.join.eql?(expected)
+
+      inspection = get_inspection(actual.join)
+
+      raise MatchError,
+            "expected column #{col_number} to contain #{expected} at #{row_start}-#{row_end} and got #{inspection}\nEntire screen:\n#{self}"
+    end
   end
 end
