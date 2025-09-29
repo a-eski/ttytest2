@@ -51,8 +51,7 @@ module TTYtest
       inspection = get_inspection_bounded(actual, column_start, column_end)
 
       raise MatchError,
-            "expected row #{row_number} to contain #{expected[column_start,
-                                                              column_end]} at #{column_start}-#{column_end} and got #{inspection}\nEntire screen:\n#{self}"
+            "expected row #{row_number} to contain #{expected} at #{column_start}-#{column_end} and got #{inspection}\nEntire screen:\n#{self}"
     end
     alias assert_line_at assert_row_at
 

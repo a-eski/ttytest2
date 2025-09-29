@@ -79,11 +79,11 @@ TTY
 
 Call one of these methods to initialize an instance of ttytest2.
 
-* `new_terminal(cmd, width, height)`: initialize new tmux terminal instance and run cmd.
+* `new_terminal(cmd, width, height, max_wait_time, use_return_for_newline)`: initialize new tmux terminal instance and run cmd.
 
 * `new_default_sh_terminal()`: intialize new tmux terminal instance using sh, width of 80, height of 24.
 
-* `new_sh_terminal(width, height)`: intialize new tmux terminal instance using sh and width and height parameters.
+* `new_sh_terminal(width, height, max_wait_time, use_return_for_newline)`: intialize new tmux terminal instance using sh with specified params.
 
 ``` ruby
 require 'ttytest'
@@ -98,6 +98,8 @@ require 'ttytest'
 # you can also use other shells, like bash
 @tty = TTYtest.new_terminal('/bin/bash')
 @tty = TTYtest.new_terminal('/bin/bash', width: 80, height: 24)
+
+# you can specify further options, see section Configurables.
 ```
 
 ## Assertions
@@ -129,6 +131,12 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 * `assert_row_regexp(row_number, regexp_str)`
 
 * `assert_rows_each_match_regexp(row_start, row_end, regexp_str)`
+
+* `assert_column(col_number, expected_text)`
+
+* `assert_column_is_empty(col_number)`
+
+* `assert_column_at(col_number, row_start, row_end, expected_str)`
 
 * `assert_cursor_position(x: x, y: y)`
 
@@ -190,7 +198,13 @@ For example, `send_line(line)` makes sure that the enter key (newline character)
 
 * `send_line_exact`: send line exactly as is to tmux. Certain special characters may not work with send_line. You can also include tmux send-keys arguments like DC for delete, etc.
 
+* `send_line_exact_then_sleep(line, sleep_time)`: simulate typing in a command in the terminal and hitting enter using send_line_exact semantics, then wait for sleep_time seconds.
+
 * `send_lines_exact`: send lines exactly are they are to tmux. Similar semantics to send_line_exact.
+
+* `send_lines_exact_then_sleep(lines, sleep_time)`: for each line in lines, simulate sending the line and hitting enter using send_line_exact semantics. After sending all the lines, sleep for sleep_time.
+
+* `send_line_exact_then_sleep_and_repeat(lines, sleep_time)`: for each line in lines, simulate sending the line and hitting enter using send_line_exact, then sleep before sending the next line.
 
 ### Output Helpers
 
@@ -201,7 +215,6 @@ Helper functions to make sending output easier! They use the methods above under
 
 * `send_return` # simulate hitting enter, equivalent to @tty.send_keys(%(\r))
 * `send_returns(number_of_times)` # equivalent to calling send_return number_of_times
-
 
 * `send_backspace` # simulate hitting backspace, equivalent to @tty.send_keys(TTYtest::BACKSPACE)
 * `send_backspaces(number_of_times)` # equivalent to calling send_backspace number_of_times
@@ -248,7 +261,7 @@ Send F keys like F1, F2, etc. as shown below:
 
 ### Constants
 
-There are some commonly used keys available as constants to make interacting with your shell/CLI easy.
+There are some commonly used keys available as constants to make interacting with your application easier.
 
 ``` ruby
   TTYtest::CTRLA
@@ -289,7 +302,7 @@ There are 2 main configurations for ttytest2: max_wait_time, and use_return_for_
 
 ### Max wait time
 
-Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing.
+Max wait time represents the amount of time in seconds that ttytest2 will keep retrying an assertion before failing that assertion.
 
 You can configure max wait time as shown below.
 
@@ -303,7 +316,7 @@ You can configure max wait time as shown below.
 
 ### Use return for newline
 
-Use return for newline tells ttytest2 to use return ('/r') instead of newline ('/n') for methods like send_line.
+Use return for newline tells ttytest2 to use return ('/r') instead of newline ('/n') for methods like send_line, send_line_exact, etc.
 
 Some line readers may interpreter return and newline differently, so this can be useful in those cases.
 
@@ -348,11 +361,11 @@ p "\n#{@tty.capture}" # this is equivalent to above statement @tty.print
 
 ## Tips
 
-If you are using ttyest2 to test your CLI, using sh is easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
+If you are using ttyest2 to test your CLI, using sh can be easier than bash because you don't have to worry about user, current working directory, etc. as shown in the examples.
 
-If you are using ttytest2 to test your shell, using assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are going to be extremely helpful, especially if trying to test your shell in different environments or using a docker container.
+The assertions like `assert_row_like`, `assert_row_starts_with`, and `assert_row_ends_with` are usually extremely helpful, especially if trying to test your application in different environments or using a docker container with a shell that is not sh.
 
-Most line readers use '\n' for newline, but some may interpret newline and return differently or expect '\r'.
+Most line readers use '\n' for newline, but some may interpret newline and return differently or expect '\r' for the enter key.
 
 ## Docker
 
