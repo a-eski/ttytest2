@@ -38,7 +38,7 @@ module TTYtest
       end
     end
 
-    # Asserts the contents of a single column contains the expected string at a specific position
+    # Asserts the contents of a column contain the expected string at the specified position
     # @param [Integer] col_number the column (starting from 0) to test against
     # @param [Integer] row_start the row position to start comparing expected against
     # @param [Integer] row_end the row position to end comparing expected against (inclusive)

@@ -4,13 +4,13 @@
 <img src="images/ttytest2.png" alt="ttytest2 logo" style="width:70%; height:auto;">
 </a>
 
-ttytest2 is a integration test framework for CLI & shell applications.
+ttytest2 is a integration test framework for CLI, TUI, & shell applications.
 
 ttytest2 is a fork and a drop-in replacement for [ttytest](https://github.com/jhawthorn/ttytest).
 
 It works by creating a tmux session behind the scenes, running the specified commands, capturing the pane, and then comparing the actual content to the expected content based on the assertions made.
 
-The assertions will wait a specified amount of time (configurable, default 2 seconds) for the expected content to appear.
+The assertions will wait a configuable amount of time (default 2 seconds) for the expected content to appear before failing.
 
 [![Gem Version](https://badge.fury.io/rb/ttytest2.svg?icon=si%3Arubygems)](https://badge.fury.io/rb/ttytest2)
 
@@ -83,7 +83,7 @@ Call one of these methods to initialize an instance of ttytest2.
 
 * `new_default_sh_terminal()`: intialize new tmux terminal instance using sh, width of 80, height of 24.
 
-* `new_sh_terminal(width, height, max_wait_time, use_return_for_newline)`: intialize new tmux terminal instance using sh with specified params.
+* `new_sh_terminal(width, height, max_wait_time, use_return_for_newline)`: intialize new tmux terminal instance using sh.
 
 ``` ruby
 require 'ttytest'
@@ -172,17 +172,17 @@ Note: Most of the time send_line has the best ergonomics.
 
 ### Base Functions
 
-These functions form the basis of interacting with the tmux pane. They power all other functions, but you can use them directly when needed.
+These functions form the basis of interacting with the tmux pane. Internally they power the other functions, but you can also use them directly.
 
-* `send_keys(output)`: for canonical shells/CLI's (or multi-character keys for noncanonical shells/CLI's).
+* `send_keys(output)`: for canonical apps (or multi-character keys for noncanonical apps).
 
-* `send_keys_one_at_a_time(output)`: for noncanonical shells/CLI's.
+* `send_keys_one_at_a_time(output)`: for noncanonical apps.
 
-* `send_keys_exact(output)`: sends keys as is, exactly. Also useful for sending tmux specific keys (any supported tmux send-keys arguments like: DC for delete, Escape for ESC, etc.)
+* `send_keys_exact(output)`: sends keys as is, exactly. Also useful for sending tmux specific keys (any tmux send-keys arguments like: DC (delete), Escape (ESC), etc.)
 
 ### Ergonomic Functions
 
-The base functions work great, but these functions build upon the base functions to provide more functionality and better ergonomics in most cases.
+The base functions work great, but these functions build upon the base functions to provide more functionalities and better ergonomics.
 
 For example, `send_line(line)` makes sure that the enter key (newline character) is sent after the `line` so you don't have to worry about adding it to `line` or calling send_newline after.
 
@@ -261,9 +261,12 @@ Send F keys like F1, F2, etc. as shown below:
 
 ### Constants
 
-There are some commonly used keys available as constants to make interacting with your application easier.
+Commonly used keys are available as constants to simplify use.
 
 ``` ruby
+# can use like:
+  send_keys_exact(TTYtest::CTRLA)
+
   TTYtest::CTRLA
   TTYtest::CTRLB
   TTYtest::CTRLC

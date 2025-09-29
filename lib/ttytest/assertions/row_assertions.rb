@@ -34,7 +34,7 @@ module TTYtest
     end
     alias assert_line_is_empty assert_row_is_empty
 
-    # Asserts the contents of a single row contains the expected string at a specific position
+    # Asserts the contents of a row contain the expected string at the specified position
     # @param [Integer] row_number the row (starting from 0) to test against
     # @param [Integer] column_start the column position to start comparing expected against
     # @param [Integer] columns_end the column position to end comparing expected against
