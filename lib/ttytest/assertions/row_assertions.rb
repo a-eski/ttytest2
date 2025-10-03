@@ -89,7 +89,7 @@ module TTYtest
     end
     alias assert_line_starts_with assert_row_starts_with
 
-    # Asserts the contents of a single row end with expected
+    # Asserts the contents of a single row ends with expected
     # @param [Integer] row_number the row (starting from 0) to test against
     # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
     # @raise [MatchError] if the row doesn't match

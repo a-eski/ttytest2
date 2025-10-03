@@ -51,7 +51,7 @@ module TTYtest
 
       rows.each_with_index do |row, i|
         next if i < row_start
-        break if i > row_end || row.nil? || row == ''
+        break if i > row_end || row.nil?
 
         actual[i - row_start] = row[col_number]
         next if row[col_number] == expected[i - row_start]
@@ -67,6 +67,66 @@ module TTYtest
 
       raise MatchError,
             "expected column #{col_number} to contain #{expected} at #{row_start}-#{row_end} and got #{inspection}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a single column contains the value expected
+    # @param [Integer] col_number the column number (starting from 0) to test against
+    # @param [String] expected the expected value contained in the column. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_like(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.include?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to be like #{expected.inspect} but got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+    alias assert_column_contains assert_column_like
+
+    # Asserts the contents of a single column starts with expected string
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_starts_with(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.start_with?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to start with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a column ends with expected
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_ends_with(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.end_with?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to end with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    private
+
+    def get_column(col_number)
+      actual = []
+
+      rows.each_with_index do |row, i|
+        break if row.nil?
+
+        actual[i] = row[col_number]
+      end
+
+      actual
     end
   end
 end
