@@ -224,5 +224,55 @@ module TTYtest
       end
       assert_includes ex.message, 'expected column 0 to end with'
     end
+
+    def test_assert_column_regexp_success
+      @capture = Capture.new(EMPTY)
+      @capture.assert_column_regexp(0, '')
+
+      @capture = Capture.new("foob\noooa\noofr")
+      @capture.assert_column_regexp(0, 'foo')
+      @capture.assert_column_regexp(0, '[f]')
+      @capture.assert_column_regexp(0, '[o]')
+      @capture.assert_column_regexp(0, '[fo]')
+      @capture.assert_column_regexp(2, '[of]')
+      @capture.assert_column_regexp(3, 'bar')
+      @capture.assert_column_regexp(3, '[b]')
+      @capture.assert_column_regexp(3, '[a]')
+      @capture.assert_column_regexp(3, '[r]')
+      @capture.assert_column_regexp(3, '')
+    end
+
+    def test_assert_column_regexp_failure
+      @capture = Capture.new(EMPTY)
+      assert_raises TTYtest::MatchError do
+        @capture.assert_column_regexp(0, '[o]')
+      end
+    end
+
+    def test_assert_columns_each_match_regexp_success
+      @capture = Capture.new(EMPTY)
+
+      @capture = Capture.new("foo\nofo\noof\n")
+      @capture.assert_columns_each_match_regexp(0, 2, '[o]')
+      @capture.assert_columns_each_match_regexp(0, 2, '[f]')
+      @capture.assert_columns_each_match_regexp(0, 2, '[fo]')
+    end
+
+    def test_assert_columns_each_match_regexp_failure
+      @capture = Capture.new(EMPTY)
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_each_match_regexp(0, 2, '[o]')
+      end
+
+      @capture = Capture.new("foo\nfoo\nfoo\n")
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_each_match_regexp(0, 2, '[a]')
+      end
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_each_match_regexp(0, 2, 'ba\]')
+      end
+    end
   end
 end

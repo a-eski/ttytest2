@@ -61,7 +61,7 @@ module TTYtest
 
     # Asserts the specified file has line count specified
     # @param [String] file_path the path to the file
-    # @param [String] expected_count the expected line count of the file
+    # @param [Integer] expected_count the expected line count of the file
     # @raise [MatchError] if the file has a different line count than specified
     def assert_file_has_line_count(file_path, expected_count)
       raise file_not_found_error(file_path) unless File.exist?(file_path)

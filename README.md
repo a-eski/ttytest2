@@ -116,6 +116,8 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 
 ### Available Assertions
 
+#### Row Assertions
+
 * `assert_row(row_number, expected_text)`
 
 * `assert_row_is_empty(row_number)`
@@ -132,17 +134,31 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 
 * `assert_rows_each_match_regexp(row_start, row_end, regexp_str)`
 
+#### Column Assertions
+
 * `assert_column(col_number, expected_text)`
 
 * `assert_column_is_empty(col_number)`
 
 * `assert_column_at(col_number, row_start, row_end, expected_str)`
 
+* `assert_column_starts_with(col_number, expected_text)`
+
+* `assert_column_ends_with(col_number, expected_text)`
+
+* `assert_column_regexp(col_number, regexp_str)`
+
+* `assert_columns_each_match_regexp(col_start, col_end, regexp_str)`
+
+#### Cursor Assertions
+
 * `assert_cursor_position(x: x, y: y)`
 
 * `assert_cursor_visible`
 
 * `assert_cursor_hidden`
+
+#### Screen Contents Assertions
 
 * `assert_contents(lines_of_terminal)`
 
@@ -153,6 +169,8 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 * `assert_contents_empty`
 
 * `assert_contents_match_regexp(regexp_str)`
+
+#### File Assertions
 
 * `assert_file_exists(file_path)`
 

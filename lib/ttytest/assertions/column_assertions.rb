@@ -42,7 +42,7 @@ module TTYtest
     # @param [Integer] col_number the column (starting from 0) to test against
     # @param [Integer] row_start the row position to start comparing expected against
     # @param [Integer] row_end the row position to end comparing expected against (inclusive)
-    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
     # @raise [MatchError] if the column doesn't match
     def assert_column_at(col_number, row_start, row_end, expected)
       validate(col_number)
@@ -113,6 +113,42 @@ module TTYtest
 
       raise MatchError,
             "expected column #{col_number} to end with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a single column match against the passed in regular expression
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @raise [MatchError] if the column doesn't match against the regular expression
+    def assert_column_regexp(col_number, regexp_str)
+      validate(col_number)
+      regexp = Regexp.new(regexp_str)
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.match?(regexp)
+
+      raise MatchError,
+            "expected column #{col_number} to match regexp #{regexp_str} but it did not. Column value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a multiple columns each match against the passed in regular expression
+    # @param [Integer] col_start the column (starting from 0) to test against
+    # @param [Integer] col_end the last column to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @raise [MatchError] if the column doesn't match against the regular expression
+    def assert_columns_each_match_regexp(col_start, col_end, regexp_str)
+      validate(col_end)
+      regexp = Regexp.new(regexp_str)
+      col_cur = col_start
+      col_end += 1 if col_end.zero?
+
+      while col_cur < col_end
+        actual = get_column(col_cur).join
+        col_cur += 1
+        next if !actual.nil? && actual.match?(regexp)
+
+        raise MatchError,
+              "expected column #{col_cur - 1} to match regexp #{regexp_str} but it did not. Column value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+      end
     end
 
     private
