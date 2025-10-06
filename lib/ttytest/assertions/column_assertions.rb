@@ -42,7 +42,7 @@ module TTYtest
     # @param [Integer] col_number the column (starting from 0) to test against
     # @param [Integer] row_start the row position to start comparing expected against
     # @param [Integer] row_end the row position to end comparing expected against (inclusive)
-    # @param [String] expected the expected value that the row starts with. Any trailing whitespace is ignored
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
     # @raise [MatchError] if the column doesn't match
     def assert_column_at(col_number, row_start, row_end, expected)
       validate(col_number)
@@ -51,7 +51,7 @@ module TTYtest
 
       rows.each_with_index do |row, i|
         next if i < row_start
-        break if i > row_end || row.nil? || row == ''
+        break if i > row_end || row.nil?
 
         actual[i - row_start] = row[col_number]
         next if row[col_number] == expected[i - row_start]
@@ -67,6 +67,102 @@ module TTYtest
 
       raise MatchError,
             "expected column #{col_number} to contain #{expected} at #{row_start}-#{row_end} and got #{inspection}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a single column contains the value expected
+    # @param [Integer] col_number the column number (starting from 0) to test against
+    # @param [String] expected the expected value contained in the column. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_like(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.include?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to be like #{expected.inspect} but got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+    alias assert_column_contains assert_column_like
+
+    # Asserts the contents of a single column starts with expected string
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_starts_with(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.start_with?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to start with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a column ends with expected
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] expected the expected value that the column starts with. Any trailing whitespace is ignored
+    # @raise [MatchError] if the column doesn't match
+    def assert_column_ends_with(col_number, expected)
+      validate(col_number)
+      expected = expected.rstrip
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.end_with?(expected)
+
+      raise MatchError,
+            "expected column #{col_number} to end with #{expected.inspect} and got #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a single column match against the passed in regular expression
+    # @param [Integer] col_number the column (starting from 0) to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @raise [MatchError] if the column doesn't match against the regular expression
+    def assert_column_regexp(col_number, regexp_str)
+      validate(col_number)
+      regexp = Regexp.new(regexp_str)
+      actual = get_column(col_number).join
+
+      return if !actual.nil? && actual.match?(regexp)
+
+      raise MatchError,
+            "expected column #{col_number} to match regexp #{regexp_str} but it did not. Column value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
+    # Asserts the contents of a multiple columns each match against the passed in regular expression
+    # @param [Integer] col_start the column (starting from 0) to test against
+    # @param [Integer] col_end the last column to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @raise [MatchError] if the column doesn't match against the regular expression
+    def assert_columns_each_match_regexp(col_start, col_end, regexp_str)
+      validate(col_end)
+      regexp = Regexp.new(regexp_str)
+      col_cur = col_start
+      col_end += 1 if col_end.zero?
+
+      while col_cur < col_end
+        actual = get_column(col_cur).join
+        col_cur += 1
+        next if !actual.nil? && actual.match?(regexp)
+
+        raise MatchError,
+              "expected column #{col_cur - 1} to match regexp #{regexp_str} but it did not. Column value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+      end
+    end
+
+    private
+
+    def get_column(col_number)
+      actual = []
+
+      rows.each_with_index do |row, i|
+        break if row.nil?
+
+        actual[i] = row[col_number]
+      end
+
+      actual
     end
   end
 end
