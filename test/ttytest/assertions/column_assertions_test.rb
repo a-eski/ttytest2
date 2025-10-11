@@ -274,5 +274,59 @@ module TTYtest
         @capture.assert_columns_each_match_regexp(0, 2, 'ba\]')
       end
     end
+
+    def test_assert_columns_match_regexp_success
+      @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
+      @capture.assert_columns_match_regexp(0, 5, '$*\n*')
+      @capture.assert_columns_match_regexp(0, 4, '$*\n*')
+      @capture.assert_columns_match_regexp(0, 3, '$*\n*')
+      @capture.assert_columns_match_regexp(0, 2, '$*\n*')
+      @capture.assert_columns_match_regexp(0, 1, '$*\n*')
+      @capture.assert_columns_match_regexp(0, 0, '$*\n*')
+      @capture.assert_columns_match_regexp(1, 5, '$*\n*')
+      @capture.assert_columns_match_regexp(2, 5, '$*\n*')
+      @capture.assert_columns_match_regexp(3, 5, '$*\n*')
+      @capture.assert_columns_match_regexp(4, 5, '$*\n*')
+      @capture.assert_columns_match_regexp(5, 5, '$*\n*')
+    end
+
+    def test_assert_columns_match_regexp_failure
+      @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_match_regexp(0, 5, '@')
+      end
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_match_regexp(0, 5, '[@]')
+      end
+    end
+
+    def test_assert_columns_match_regexp_remove_newlines_success
+      @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
+      @capture.assert_columns_match_regexp(0, 5, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(0, 4, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(0, 3, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(0, 2, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(0, 1, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(0, 0, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(1, 5, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(2, 5, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(3, 5, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(4, 5, '$*', remove_newlines: true)
+      @capture.assert_columns_match_regexp(5, 5, '$*', remove_newlines: true)
+    end
+
+    def test_assert_columns_match_regexp_remove_newlines_failure
+      @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_match_regexp(0, 5, '@', remove_newlines: true)
+      end
+
+      assert_raises TTYtest::MatchError do
+        @capture.assert_columns_match_regexp(0, 5, '[@]', remove_newlines: true)
+      end
+    end
   end
 end

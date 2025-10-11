@@ -125,7 +125,7 @@ module TTYtest
     # @param [Integer] row_start the row (starting from 0) to test against
     # @param [Integer] row_end the last row to test against
     # @param [String] regexp_str the regular expression as a string that will be used to match with.
-    # @raise [MatchError] if the row doesn't match against the regular expression
+    # @raise [MatchError] if a row doesn't match against the regular expression
     def assert_rows_each_match_regexp(row_start, row_end, regexp_str)
       validate(row_end)
       regexp = Regexp.new(regexp_str)
@@ -139,5 +139,31 @@ module TTYtest
       end
     end
     alias assert_lines_each_match_regexp assert_rows_each_match_regexp
+
+    # Asserts the contents of multiple rows match the passed in regular expression.
+    # @param [Integer] row_start the row (starting from 0) to test against
+    # @param [Integer] row_end the last row to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @param [bool] remove_newlines an optional paramter to specify if line separators should be removed, defaults to false
+    # @raise [MatchError] if the rows don't match against the regular expression
+    def assert_rows_match_regexp(row_start, row_end, regexp_str, remove_newlines: false)
+      validate(row_end)
+      regexp = Regexp.new(regexp_str)
+      row_end += 1 if row_end.zero?
+
+      slices = rows.slice(row_start, row_end)
+      if remove_newlines
+        slices.each_with_index do |slice, i|
+          slices[i] = slice.rstrip
+        end
+      end
+      actual = slices.join
+
+      return if !actual.nil? && actual.match?(regexp)
+
+      raise MatchError,
+            "expected rows #{row_start}-#{row_end} to match regexp #{regexp_str} but they did not. Rows value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+    alias assert_lines_match_regexp assert_rows_match_regexp
   end
 end
