@@ -151,6 +151,32 @@ module TTYtest
       end
     end
 
+    # Asserts the contents of multiple columns match the passed in regular expression.
+    # @param [Integer] col_start the column (starting from 0) to test against
+    # @param [Integer] col_end the last column to test against
+    # @param [String] regexp_str the regular expression as a string that will be used to match with.
+    # @param [bool] remove_newlines an optional paramter to specify if line separators should be removed, defaults to false
+    # @raise [MatchError] if the columns don't match against the regular expression
+    def assert_columns_match_regexp(col_start, col_end, regexp_str, remove_newlines: false)
+      validate(col_end)
+      regexp = Regexp.new(regexp_str)
+      col_cur = col_start
+      col_end += 1 if col_end.zero?
+      actual = ''
+
+      while col_cur < col_end
+        col = get_column(col_cur).join
+        col = col.rstrip if remove_newlines
+        actual += col
+        col_cur += 1
+      end
+
+      return if !actual.nil? && actual.match?(regexp)
+
+      raise MatchError,
+            "expected columns #{col_start}-#{col_end} to match regexp #{regexp_str} but they did not. Columns value #{get_inspection(actual)}\nEntire screen:\n#{self}"
+    end
+
     private
 
     def get_column(col_number)

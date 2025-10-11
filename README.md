@@ -134,6 +134,8 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 
 * `assert_rows_each_match_regexp(row_start, row_end, regexp_str)`
 
+* `assert_rows_match_regexp(row_start, row_end, regexp_str, remove_newlines: false)`
+
 #### Column Assertions
 
 * `assert_column(col_number, expected_text)`
@@ -149,6 +151,8 @@ If you are reading this on github, the ruby docs accessible from [RubyDoc.Info](
 * `assert_column_regexp(col_number, regexp_str)`
 
 * `assert_columns_each_match_regexp(col_start, col_end, regexp_str)`
+
+* `assert_columns_match_regexp(col_start, col_end, regexp_str, remove_newlines: false)`
 
 #### Cursor Assertions
 
