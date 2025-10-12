@@ -25,6 +25,14 @@ module TTYtest
       assert_includes ex.message, 'expected column 0 to be'
     end
 
+    def test_assert_column_nil_failure
+      @capture = Capture.new(nil)
+      ex = assert_raises TTYtest::MatchError do
+        @capture.assert_column(0, 'foo')
+      end
+      assert_includes ex.message, 'expected column 0 to be "foo"'
+    end
+
     def test_assert_column_wrong_column_failure
       @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
 
