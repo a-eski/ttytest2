@@ -21,6 +21,13 @@ TERM
         $ echo "Hello, world
         Hello, world
       TERM
+
+      @capture.assert_contents <<~TERM
+        $ echo "Hello, world
+        Hello, world
+
+
+      TERM
     end
 
     def test_assert_contents_failure
@@ -83,6 +90,14 @@ TERM
         $ echo "Hello, world"
         Hello, world
       TERM
+
+      @capture.assert_contents_at 0, 0, <<~TERM
+        $ echo "Hello, world"
+      TERM
+
+      @capture.assert_contents_at 1, 1, <<~TERM
+        Hello, world
+      TERM
     end
 
     def test_assert_contents_at_success_multiple_lines
@@ -118,6 +133,17 @@ TERM
       @capture.assert_contents_at 0, 3, <<~TERM
         $ echo "Hello, world"
         Hello, world
+        $ echo "Hello, world"
+        Hello, world
+      TERM
+
+      @capture.assert_contents_at 1, 3, <<~TERM
+        Hello, world
+        $ echo "Hello, world"
+        Hello, world
+      TERM
+
+      @capture.assert_contents_at 2, 3, <<~TERM
         $ echo "Hello, world"
         Hello, world
       TERM
@@ -160,6 +186,8 @@ TERM
 
     def test_assert_contents_include_true
       @capture = Capture.new(FOO_BAR_BAZ_THEN_EMPTY)
+      @capture.assert_contents_include('foo')
+      @capture.assert_contents_include('bar')
       @capture.assert_contents_include('baz')
     end
 
