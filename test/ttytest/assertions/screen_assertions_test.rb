@@ -86,9 +86,19 @@ TERM
       @capture.assert_contents_at(0, 0, '$ echo "Hello, world"')
       @capture.assert_contents_at(1, 1, 'Hello, world')
 
+      @capture.assert_contents_at 0, 0, <<~TERM
+        $ echo "Hello, world"
+      TERM
+
       @capture.assert_contents_at 0, 1, <<~TERM
         $ echo "Hello, world"
         Hello, world
+      TERM
+
+      @capture.assert_contents_at 0, 2, <<~TERM
+        $ echo "Hello, world"
+        Hello, world
+
       TERM
 
       @capture.assert_contents_at 0, 0, <<~TERM
@@ -125,7 +135,8 @@ TERM
         Hello, world
       TERM
 
-      @capture.assert_contents_at 1, 2, <<~TERM
+      @capture.assert_contents_at 0, 2, <<~TERM
+        $ echo "Hello, world"
         Hello, world
         $ echo "Hello, world"
       TERM
@@ -137,6 +148,15 @@ TERM
         Hello, world
       TERM
 
+      @capture.assert_contents_at 1, 1, <<~TERM
+        Hello, world
+      TERM
+
+      @capture.assert_contents_at 1, 2, <<~TERM
+        Hello, world
+        $ echo "Hello, world"
+      TERM
+
       @capture.assert_contents_at 1, 3, <<~TERM
         Hello, world
         $ echo "Hello, world"
@@ -145,6 +165,10 @@ TERM
 
       @capture.assert_contents_at 2, 3, <<~TERM
         $ echo "Hello, world"
+        Hello, world
+      TERM
+
+      @capture.assert_contents_at 3, 3, <<~TERM
         Hello, world
       TERM
     end
