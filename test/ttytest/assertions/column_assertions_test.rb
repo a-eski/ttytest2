@@ -5,14 +5,19 @@ require 'test_helper'
 module TTYtest
   class ColumnAssertionsTest < Minitest::Test
     def test_assert_column_success
-      @capture = Capture.new("$\n$\n$\n$\n$\n$\n")
+      @capture = Capture.new("$@za\n$@za\n$@za\n$@za\n$@za\n$@za\n")
 
       @capture.assert_column(0, '$$$$$$')
+      @capture.assert_column(1, '@@@@@@')
+      @capture.assert_column(2, 'zzzzzz')
+      @capture.assert_column(3, 'aaaaaa')
     end
 
     def test_assert_column_right_success
       @capture = Capture.new("  $\n  $\n  $\n  $\n  $\n  $\n")
 
+      @capture.assert_column_is_empty(0)
+      @capture.assert_column_is_empty(1)
       @capture.assert_column(2, '$$$$$$')
     end
 
@@ -23,6 +28,14 @@ module TTYtest
         @capture.assert_column(0, '$$@$$$')
       end
       assert_includes ex.message, 'expected column 0 to be'
+    end
+
+    def test_assert_column_nil_failure
+      @capture = Capture.new(nil)
+      ex = assert_raises TTYtest::MatchError do
+        @capture.assert_column(0, 'foo')
+      end
+      assert_includes ex.message, 'expected column 0 to be "foo"'
     end
 
     def test_assert_column_wrong_column_failure
@@ -115,13 +128,30 @@ module TTYtest
       @capture = Capture.new("  $\n  $\n  $\n  $\n  $\n  $\n")
 
       @capture.assert_column_at(2, 0, 5, '$$$$$$')
+      @capture.assert_column_at(2, 0, 4, '$$$$$')
+      @capture.assert_column_at(2, 0, 3, '$$$$')
+      @capture.assert_column_at(2, 0, 2, '$$$')
+      @capture.assert_column_at(2, 0, 1, '$$')
+      @capture.assert_column_at(2, 0, 0, '$')
+
       @capture.assert_column_at(2, 1, 5, '$$$$$')
       @capture.assert_column_at(2, 1, 4, '$$$$')
+      @capture.assert_column_at(2, 1, 3, '$$$')
+      @capture.assert_column_at(2, 1, 2, '$$')
+      @capture.assert_column_at(2, 1, 1, '$')
+
       @capture.assert_column_at(2, 2, 5, '$$$$')
       @capture.assert_column_at(2, 2, 4, '$$$')
+      @capture.assert_column_at(2, 2, 3, '$$')
+      @capture.assert_column_at(2, 2, 2, '$')
+
       @capture.assert_column_at(2, 3, 5, '$$$')
       @capture.assert_column_at(2, 3, 4, '$$')
+      @capture.assert_column_at(2, 3, 3, '$')
+
+      @capture.assert_column_at(2, 4, 5, '$$')
       @capture.assert_column_at(2, 4, 4, '$')
+
       @capture.assert_column_at(2, 5, 5, '$')
     end
 

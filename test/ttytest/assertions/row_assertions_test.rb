@@ -320,6 +320,8 @@ module TTYtest
       @capture.assert_rows_each_match_regexp(0, 2, 'foo')
       @capture.assert_rows_each_match_regexp(0, 2, '[o]')
       @capture.assert_rows_each_match_regexp(0, 2, '[f]')
+      @capture.assert_rows_each_match_regexp(0, 2, '[fo]')
+      @capture.assert_rows_each_match_regexp(0, 2, '[fo]')
     end
 
     def test_assert_rows_each_match_regexp_failure

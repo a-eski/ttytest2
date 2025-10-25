@@ -50,6 +50,12 @@ module TTYtest
       hello_world_test
     end
 
+    def test_new_default_sh_terminal_hello_world_return
+      @tty = TTYtest.new_default_sh_terminal
+      @tty.use_return_for_newline = true
+      hello_world_test
+    end
+
     def test_command_exiting
       @tty = TTYtest.new_terminal(%(printf "foo\nbar\n"))
       @tty.assert_row(0, 'foo')
@@ -70,6 +76,9 @@ module TTYtest
       tty = TTYtest.new_terminal(input)
       tty.assert_cursor_position(0, 0)
       tty.assert_contents ''
+      tty.assert_contents_empty
+      tty.assert_row_is_empty(0)
+      tty.assert_column_is_empty(0)
     end
 
     def test_empty_commands
@@ -304,6 +313,11 @@ module TTYtest
       @tty.assert_cursor_position(2, 2)
 
       @tty.assert_contents_at(0, 0, '$ echo "Hello, world"')
+      @tty.assert_contents_at 0, 2, <<~TTY
+        $ echo "Hello, world"
+        Hello, world
+        $
+      TTY
 
       @tty.assert_row_starts_with(0, '$ echo')
       @tty.assert_row_ends_with(0, '"Hello, world"')
@@ -322,6 +336,7 @@ module TTYtest
       @tty = TTYtest.new_terminal(%(PS1='$ ' /bin/sh), width: 80, height: 7, use_return_for_newline: true)
       @tty.assert_row(0, '$')
       @tty.assert_cursor_position(2, 0)
+      @tty.assert_cursor_visible
 
       @tty.send_line('echo "Hello, world"')
 
