@@ -18,13 +18,20 @@ module TTYtest
     alias assert_screen assert_contents
 
     # Asserts the contents of the terminal at specified rows
+    # @param [Integer] row_start the row (starting from 0) to test against
+    # @param [Integer] row_end the last row to test against
     # @param [String] expected the expected contents of the terminal at specified rows. Trailing whitespace on each line is ignored
     # @raise [MatchError] if the terminal doesn't match the expected content
     def assert_contents_at(row_start, row_end, expected)
       validate(row_end)
-      row_end += 1 if row_end.zero?
+      # row_end += 1 if row_end.zero?
+      # row_end += 1 if (row_start != row_end || row_end.zero?) && row_start + 1 != row_end
+      row_start -= 1 unless row_start.zero? || row_start == row_end
+      # row_end += 1 if row_start != row_end && row_start + 1 != row_end
+      row_end += 1 if row_start + 1 != row_end
 
-      matched, diff = get_diff(expected, rows.slice(row_start, row_end))
+      # matched, diff = get_diff(expected, rows.slice(row_start, row_end))
+      matched, diff = get_diff_bounded(row_start, row_end, expected)
 
       return if matched
 

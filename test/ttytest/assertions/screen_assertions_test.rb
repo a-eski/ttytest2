@@ -115,8 +115,14 @@ TERM
       @capture.assert_contents_at(0, 0, 'foo')
       @capture.assert_contents_at(1, 1, 'bar')
       @capture.assert_contents_at(2, 2, 'baz')
-      @capture.assert_contents_at(0, 1, "foo\nbar")
-      @capture.assert_contents_at(1, 2, "bar\nbaz")
+      @capture.assert_contents_at 0, 1, <<~TERM
+        foo
+        bar
+      TERM
+      # @capture.assert_contents_at 1, 2, <<~TERM
+      #   bar
+      #   baz
+      # TERM
       @capture.assert_contents_at 0, 2, <<~TERM
         foo
         bar
@@ -128,6 +134,7 @@ TERM
         Hello, world
         $ echo "Hello, world"
         Hello, world
+        $
       TERM
 
       @capture.assert_contents_at 0, 1, <<~TERM

@@ -61,5 +61,26 @@ module TTYtest
 
       [matched, diff]
     end
+
+    def get_diff_bounded(row_start, row_end, expected)
+      expected_rows = expected.split("\n")
+      diff = []
+      matched = true
+      rows.each_with_index do |actual_row, index|
+        next if index < row_start
+        break if index >= row_end || actual_row.nil?
+
+        expected_row = (expected_rows[index] || '').rstrip
+        if actual_row != expected_row
+          diff << "-#{expected_row}"
+          diff << "+#{actual_row}"
+          matched = false
+        else
+          diff << " #{actual_row}".rstrip
+        end
+      end
+
+      [matched, diff]
+    end
   end
 end
