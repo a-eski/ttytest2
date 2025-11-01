@@ -68,7 +68,8 @@ module TTYtest
       matched = true
       rows.each_with_index do |actual_row, index|
         next if index < row_start
-        break if index >= row_end || actual_row.nil?
+        # break if index >= row_end || actual_row.nil?
+        break if index > row_end || actual_row.nil?
 
         expected_row = (expected_rows[index] || '').rstrip
         if actual_row != expected_row

@@ -26,12 +26,20 @@ module TTYtest
       validate(row_end)
       # row_end += 1 if row_end.zero?
       # row_end += 1 if (row_start != row_end || row_end.zero?) && row_start + 1 != row_end
-      row_start -= 1 unless row_start.zero? || row_start == row_end
+      # row_start -= 1 unless row_start.zero? || row_start == row_end
+      # row_end -= 1 unless row_end.zero? || row_start == row_end
+      # if row_start + 1 == row_end
+      #   row_start += 1
+      # elsif !(row_end.zero? || row_start != row_end)
+      #   row_end -= 1
+      # end
+      row_start += 1 if row_start + 1 == row_end && row_start.zero?
+      row_end -= 1 unless row_end.zero? || row_start != row_end
       # row_end += 1 if row_start != row_end && row_start + 1 != row_end
-      row_end += 1 if row_start + 1 != row_end
+      # row_end += 1 if row_start + 1 != row_end
 
-      # matched, diff = get_diff(expected, rows.slice(row_start, row_end))
-      matched, diff = get_diff_bounded(row_start, row_end, expected)
+      matched, diff = get_diff(expected, rows.slice(row_start, row_end))
+      # matched, diff = get_diff_bounded(row_start, row_end, expected)
 
       return if matched
 
